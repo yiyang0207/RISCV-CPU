@@ -6,11 +6,11 @@ module riscv_top
 	parameter SIM = 0						// whether in simulation
 )
 (
-	input wire 			EXCLK,
-	input wire			btnC,
+	input wire 			EXCLK, //clk
+	input wire			btnC, //rst
 	output wire 		Tx,
 	input wire 			Rx,
-	output wire			led
+	output wire		  	led
 );
 
 localparam SYS_CLK_FREQ = 100000000;
@@ -88,7 +88,7 @@ wire        				hci_ram_wr;
 
 wire 						hci_io_en;
 wire [ 2:0]					hci_io_sel;
-wire [ 7:0]					hci_io_din;
+wire [ 7:0]		            hci_io_din;
 wire [ 7:0]					hci_io_dout;
 wire 						hci_io_wr;
 wire 						hci_io_full;
