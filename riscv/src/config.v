@@ -1,6 +1,10 @@
 //zero
 `define ZeroWord        32'h00000000
 `define ZeroRegAddr     5'b00000
+`define ZeroBit         1'b0
+`define ZeroByte        8'b00000000
+`define ZeroOpt         6'b000000
+`define ZeroDataLen     3'b000
 
 //state
 `define Enable          1'b1
@@ -11,13 +15,21 @@
 `define AddrBus         31:0
 `define RegBus          31:0
 `define RegAddrBus      4:0
-`define StallBus        3:0
+`define StallBus        4:0
 `define OpcodeBus       6:0
 `define OptBus          5:0
 `define ShamtBus        4:0
+`define RamDataBus      7:0
+
+//stall
+`define NoStall         5'b00000
+`define IfStall         5'b00001
+`define IdStall         5'b00011
+`define ExStall         5'b00111
+`define MemStall        5'b01111
+`define AllStall        5'b11111
 
 //operation
-`define NOP             6'b000000
 `define LUI             6'b000001
 `define AUIPC           6'b000010
 `define JAL             6'b000011

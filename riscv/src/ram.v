@@ -27,5 +27,6 @@ single_port_ram_sync #(.ADDR_WIDTH(ADDR_WIDTH),
 
 assign ram_bram_we = (en_in) ? ~r_nw_in      : 1'b0;
 assign d_out       = (en_in) ? ram_bram_dout : 8'h00;
+//read data from memory -> d_out!=0 ->ram_bram_dout!=0 ->r_nw_in==0
 
 endmodule

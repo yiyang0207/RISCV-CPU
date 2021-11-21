@@ -5,43 +5,66 @@ module EX (
     input  wire rst,
     input  wire rdy,
 
+    //ID_EX
     input  wire [`AddrBus] pc_i,
     input  wire [`OptBus] inst_i,
     input  wire [`RegBus] vs1,
     input  wire [`RegBus] vs2,
     input  wire [`RegAddrBus] rd_i,
     input  wire [`RegBus] imm,
-    input  wire jump_enable_i, //TODO delete?
-
-    output reg [`AddrBus] pc_o,
+    input  wire w_enable_i,
+    input  wire branch_i, //TODO delete?
+    
+    //EX_MEM
     output reg [`OptBus] inst_o,
-    output reg [`RegAddrBus] rd_o,
-    output reg [`RegBus] vd,
-    output reg w_enable,
+    output reg [`RegAddrBus] rd_o, //also output to id
+    output reg [`RegBus] vd, //also output to id
+    output reg [`AddrBus] memctrl_addr,
 
-    output reg jump_enable_o,
-    output reg jump_dist
+    //ID
+    output reg load_enable,
+    output reg w_enable_o, //also output to ex_mem
+
+    //jump
+    output reg jump_enable,
+    output reg [`AddrBus] jump_dist,
+
+    //branch_predictor
+    output reg bp_enable,
+    output reg [`AddrBus] bp_dist,
+    output reg [`AddrBus] bp_pc,
+    output reg bp_taken,
+
+    output reg ex_stall
 );
 
 always @(*) begin
     if(rst==`Enable||rdy==`Disable) begin
-        pc_o=`ZeroWord;
-        inst_o=`NOP;
+        // pc_o=`ZeroWord;
+        inst_o=`ZeroOpt;
         rd_o=`ZeroRegAddr;
         vd=`ZeroWord;
-        w_enable=`Disable;
-        jump_enable_o=`Disable;
+        memctrl_addr=`ZeroWord;
+        load_enable=`Disable;
+        w_enable_o=`Disable;
+        jump_enable=`Disable;
         jump_dist=`ZeroWord;
+        //TODO
+        ex_stall=`Disable;
     end else begin
-        pc_o=pc_i;
+        // pc_o=pc_i;
         inst_o=inst_i;
         rd_o=rd_i;
         vd=`ZeroWord;
-        w_enable=`Disable;
-        jump_enable_o=`Disable;
-
+        memctrl_addr=`ZeroWord;
+        load_enable=`Disable;
+        w_enable_o=w_enable_i;
+        jump_enable=`Disable;
+        jump_dist=`ZeroWord;
+        //TODO
+        ex_stall=`Disable;
         case (inst_i)
-            `NOP:begin
+            `ZeroOpt:begin
                 rd_o=`ZeroWord;
             end
             `LUI:begin
@@ -50,11 +73,11 @@ always @(*) begin
             `AUIPC:begin
                 vd=pc_i+imm;
             end
-            `JAL,`JALR:begin
+            `JAL,`JALR:begin //todo
                 vd=pc_i+4;
             end
-            `BEQ:begin
-                jump_enable_o=`Enable;
+            `BEQ:begin //todo
+                jump_enable=`Enable;
                 if(vs1==vs2) begin
                     jump_dist=pc_i+imm;
                 end else begin
@@ -62,7 +85,7 @@ always @(*) begin
                 end
             end
             `BNE:begin
-                jump_enable_o=`Enable;
+                jump_enable=`Enable;
                 if(vs1!=vs2) begin
                     jump_dist=pc_i+imm;
                 end else begin
@@ -70,7 +93,7 @@ always @(*) begin
                 end
             end
             `BLT:begin
-                jump_enable_o=`Enable;
+                jump_enable=`Enable;
                 if($signed(vs1)<$signed(vs2)) begin
                     jump_dist=pc_i+imm;
                 end else begin
@@ -78,7 +101,7 @@ always @(*) begin
                 end
             end
             `BGE:begin
-                jump_enable_o=`Enable;
+                jump_enable=`Enable;
                 if($signed(vs1)>=$signed(vs2)) begin
                     jump_dist=pc_i+imm;
                 end else begin
@@ -86,15 +109,15 @@ always @(*) begin
                 end
             end
             `BLTU:begin
-                jump_enable_o=`Enable;
+                jump_enable=`Enable;
                 if(vs1<vs2)  begin
                     jump_dist=pc_i+imm;
                 end else begin
                     jump_dist=pc_i+4;
                 end
             end
-            `BGEU:begin
-                jump_enable_o=`Enable;
+            `BGEU:begin //todo
+                jump_enable=`Enable;
                 if(vs1>vs2) begin
                     jump_dist=pc_i+imm;
                 end else begin
@@ -102,10 +125,11 @@ always @(*) begin
                 end
             end
             `LB,`LH,`LW,`LBU,`LHU:begin
-                vd=vs1+imm;
+                memctrl_addr=vs1+imm;
+                load_enable=`Enable;
             end
             `SB,`SH,`SW:begin
-                rd_o=vs1+imm;
+                memctrl_addr=vs1+imm;
                 vd=vs2;
             end
             `ADDI:begin
