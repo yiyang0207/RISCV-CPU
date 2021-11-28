@@ -1,4 +1,4 @@
-`include "config.v"
+`include "src/config.v"
 
 module EX_MEM (
     input  wire clk,

@@ -1,12 +1,12 @@
 // RISCV32I CPU top module
 // port modification allowed for debugging purposes
 
-`include "config.v"
+`include "src/config.v"
 
 module cpu(
   input  wire                 clk_in,			// system clock signal
   input  wire                 rst_in,			// reset signal
-	input  wire					        rdy_in,			// ready signal, pause cpu when low
+	input  wire                 rdy_in,			// ready signal, pause cpu when low
 
   input  wire [ 7:0]          mem_din,		// data input bus
   output wire [ 7:0]          mem_dout,		// data output bus
@@ -15,7 +15,7 @@ module cpu(
 	
 	input  wire                 io_buffer_full, // 1 if uart buffer is full
 	
-	output wire [31:0]		    	dbgreg_dout		// cpu register output (debugging demo)
+	output wire [31:0]          dbgreg_dout		// cpu register output (debugging demo)
 );
 
 // implementation goes here
@@ -52,8 +52,8 @@ wire regfile_r2_enable;
 wire [`RegAddrBus] regfile_r2_addr;
 wire [`RegBus] regfile_r2_data;
 wire regfile_w_enable;
-wire regfile_w_addr;
-wire regfile_w_data;
+wire [`RegAddrBus] regfile_w_addr;
+wire [`RegBus] regfile_w_data;
 
 regfile RegFile(
   .clk(clk_in),
@@ -102,7 +102,7 @@ wire memctrl_mem_finished;
 mem_ctrl MemCtrl(
   .clk(clk_in),
   .rst(rst_in),
-  .rdy_in(rdy_in),
+  .rdy(rdy_in),
   .ram_data_i(mem_din),
   .ram_data_o(mem_dout),
   .ram_addr(mem_a),
@@ -137,7 +137,7 @@ IF If(
   .mem_ctrl_enable(memctrl_if_enable),
   .mem_ctrl_addr(memctrl_if_addr),
   .pc_o(if_ifid_pc),
-  .inst_o(if_inst),
+  .inst_o(if_ifid_inst),
   .if_stall(if_stall)
 );
 
@@ -165,6 +165,9 @@ wire [`RegAddrBus] id_idex_rd;
 wire [`RegBus] id_idex_imm;
 wire id_idex_w_enable;
 wire ex_id_load_enable;
+wire [`RegAddrBus] ex_exmem_rd;
+wire [`RegBus] ex_exmem_vd;
+wire ex_exmem_w_enable;
 wire mem_id_w_enable;
 wire [`RegAddrBus] mem_id_rd;
 wire [`RegBus] mem_id_vd;
@@ -205,7 +208,7 @@ wire [`RegBus] idex_ex_vs1;
 wire [`RegBus] idex_ex_vs2;
 wire [`RegAddrBus] idex_ex_rd;
 wire [`RegBus] idex_ex_imm;
-wire [`RegBus] idex_ex_w_enable;
+wire idex_ex_w_enable;
 
 ID_EX IdEx(
   .clk(clk_in),
@@ -230,12 +233,9 @@ ID_EX IdEx(
 );
 
 wire [`OptBus] ex_exmem_inst;
-wire [`RegAddrBus] ex_exmem_rd;
-wire [`RegBus] ex_exmem_vd;
 wire [`AddrBus] ex_exmem_memctrl_addr;
-wire ex_exmem_w_enable;
 wire ex_jump_enable;
-wire ex_jump_dist;
+wire [`AddrBus] ex_jump_dist;
 
 EX Ex(
   .clk(clk_in),

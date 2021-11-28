@@ -6,10 +6,10 @@ module riscv_top
 	parameter SIM = 0						// whether in simulation
 )
 (
-	input wire 			EXCLK, //clk
-	input wire			btnC, //rst
+	input  wire 		EXCLK, //clk
+	input  wire			btnC, //rst
 	output wire 		Tx,
-	input wire 			Rx,
+	input  wire 		Rx,
 	output wire		  	led
 );
 

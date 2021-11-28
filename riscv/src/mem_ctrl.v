@@ -1,4 +1,4 @@
-`include "config.v"
+`include "src/config.v"
 
 module mem_ctrl (
     input  wire clk,

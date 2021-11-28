@@ -1,4 +1,4 @@
-`include "config.v"
+`include "src/config.v"
 
 module MEM_WB (
     input  wire clk,

@@ -1,4 +1,4 @@
-`include "config.v"
+`include "src/config.v"
 
 module ID_EX (
     input  wire clk,
