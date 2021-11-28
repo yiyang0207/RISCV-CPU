@@ -6,7 +6,6 @@ module MEM_WB (
     input  wire rdy,
 
     //MEM
-    input  wire [`OptBus] mem_inst,
     input  wire [`RegAddrBus] mem_rd,
     input  wire [`RegBus] mem_vd,
     input  wire mem_w_enable,
@@ -14,7 +13,6 @@ module MEM_WB (
     input  wire [`StallBus] stall_ctrler,
     
     //WB
-    output reg [`OptBus] wb_inst,
     output reg [`RegAddrBus] wb_rd,
     output reg [`RegBus] wb_vd,
     output reg wb_w_enable

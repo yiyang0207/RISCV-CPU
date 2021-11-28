@@ -8,7 +8,7 @@ module ID (
     //IF_ID
     input  wire [`AddrBus] pc_i,
     input  wire [`InstBus] inst_i,
-    input  wire branch_i,
+    // input  wire branch_i,
 
     //ID_EX
     output reg [`AddrBus] pc_o,
@@ -18,7 +18,7 @@ module ID (
     output reg [`RegAddrBus] rd,
     output reg [`RegBus] imm,
     output reg w_enable_o,
-    output reg branch_o,
+    // output reg branch_o,
 
     //EX
     input  wire ex_load_enable,
@@ -58,12 +58,12 @@ always @(*) begin
         rd=`ZeroRegAddr;
         imm=`ZeroWord;
         w_enable_o=`Disable;
-        branch_o=`Disable;
+        // branch_o=`Disable;
     end else begin
         pc_o=pc_i;
         rd=`ZeroRegAddr;
         imm=`ZeroWord;
-        branch_o=branch_i;
+        // branch_o=branch_i;
         rs1=inst_i[19:15];
         rs2=inst_i[24:20];
         case (opcode)

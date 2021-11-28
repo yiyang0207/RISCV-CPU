@@ -20,6 +20,7 @@
 `define OptBus          5:0
 `define ShamtBus        4:0
 `define RamDataBus      7:0
+`define TagBus          8:0
 
 //stall
 `define NoStall         5'b00000

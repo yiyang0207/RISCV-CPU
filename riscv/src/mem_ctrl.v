@@ -24,7 +24,7 @@ module mem_ctrl (
     input  wire [2:0] mem_data_len,
     input  wire [`RegBus] mem_data_i,
     input  wire mem_rw_sel, //read 0/write 1
-    output reg [`InstBus] mem_data_o,
+    output reg [`RegBus] mem_data_o,
     output reg mem_busy,
     output reg mem_finished
 );
