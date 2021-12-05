@@ -1,5 +1,11 @@
 # RISCV-CPU
 
+#### my progress
+
+- [x] basic (5-stage pipeline)
+- [ ] branch prediction
+- [ ] cache
+
 #### Repo Structure
 
 ```
