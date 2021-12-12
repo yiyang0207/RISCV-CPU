@@ -267,6 +267,7 @@ EX_MEM ExMem(
   .ex_rd(ex_exmem_rd),
   .ex_vd(ex_exmem_vd),
   .ex_w_enable(ex_exmem_w_enable),
+  .ex_memctrl_addr(ex_exmem_memctrl_addr),
   .stall_ctrler(stall_ctrler),
   .mem_inst(exmem_mem_inst),
   .mem_rd(exmem_mem_rd),

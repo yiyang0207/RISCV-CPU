@@ -69,16 +69,16 @@ always @(*) begin
             if_stall=`Disable;
             mem_ctrl_enable=`Disable;
             // mem_ctrl_addr=`ZeroWord;
-        // end else if(mem_ctrl_mem_busy==`Disable) begin
-        //     pc_o=`ZeroWord;
-        //     inst_o=`ZeroWord;
-        //     if_stall=`Enable;
-        //     mem_ctrl_enable=`Enable;
-        // end else if(mem_ctrl_mem_busy==`Enable) begin
-        //     pc_o=`ZeroWord;
-        //     inst_o=`ZeroWord;
-        //     if_stall=`Enable;
-        //     mem_ctrl_enable=`Disable;
+        end else if(mem_ctrl_mem_busy==`Enable) begin
+            pc_o=`ZeroWord;
+            inst_o=`ZeroWord;
+            if_stall=`Enable;
+            mem_ctrl_enable=`Disable;
+        end else if(mem_ctrl_mem_busy==`Disable) begin
+            pc_o=`ZeroWord;
+            inst_o=`ZeroWord;
+            if_stall=`Enable;
+            mem_ctrl_enable=`Enable;
         end else begin
             pc_o=`ZeroWord;
             inst_o=`ZeroWord;
