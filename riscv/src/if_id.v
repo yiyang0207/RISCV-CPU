@@ -1,4 +1,4 @@
-`include "src/config.v"
+`include "config.v"
 
 module IF_ID (
     input  wire clk,
@@ -9,7 +9,9 @@ module IF_ID (
     input  wire [`AddrBus] if_pc,
     input  wire [`InstBus] if_inst,
 
+    //EX
     input  wire jump_enable,
+
     input  wire [`StallBus] stall_ctrler,
 
     //ID

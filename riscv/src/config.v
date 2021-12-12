@@ -20,7 +20,18 @@
 `define OptBus          5:0
 `define ShamtBus        4:0
 `define RamDataBus      7:0
-`define TagBus          8:0
+
+//icache
+`define IcacheSize      256
+`define IcacheBus       0:255
+`define IcacheIndexBus  9:2
+`define IcacheTagBus    17:10
+`define IcacheTag       7:0
+
+//predictor
+`define PredSize        128
+`define PredBus         0:127
+`define PredTagBus      8:0
 
 //stall
 `define NoStall         5'b00000

@@ -1,4 +1,4 @@
-`include "src/config.v"
+`include "config.v"
 
 module ID (
     input  wire clk,
@@ -86,7 +86,7 @@ always @(*) begin
             7'b1101111:begin
                 inst_o=`JAL;
                 rd=inst_i[11:7];
-                imm={{12{inst_i[12]}},inst_i[19:12],inst_i[20],inst_i[30:21],1'b0};
+                imm={{12{inst_i[31]}},inst_i[19:12],inst_i[20],inst_i[30:21],1'b0};
                 w_enable_o=`Enable;
                 r1_enable=`Disable;
                 r2_enable=`Disable;
@@ -95,6 +95,7 @@ always @(*) begin
                 inst_o=`JALR;
                 rd=inst_i[11:7];
                 imm={{21{inst_i[31]}},inst_i[30:20]};
+                // $display("%d",imm);
                 w_enable_o=`Enable;
                 r1_enable=`Enable;
                 r2_enable=`Disable;

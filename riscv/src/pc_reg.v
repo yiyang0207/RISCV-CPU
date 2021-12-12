@@ -1,4 +1,4 @@
-`include "src/config.v"
+`include "config.v"
 
 module pc_reg (
     input  wire clk,
@@ -6,29 +6,33 @@ module pc_reg (
     input  wire rdy,
 
     input  wire [`StallBus] stall, 
-    input  wire jump_enable_i,
+
+    //EX
+    input  wire jump_enable,
     input  wire [`AddrBus] jump_dist,
 
+    //branch
     // input  wire is_branch,
-    // input  wire taken_i,
+    // input  wire branch_taken_i,
+    // input  wire [`AddrBus] branch_pc_i;
     // input  wire [`AddrBus] branch_dist,
     
-    output reg [`AddrBus] pc,
-    output wire jump_enable_o
+    //IF
+    output reg [`AddrBus] pc_o
 );
 
-// reg [`AddrBus] BTB[0:127];
-// reg [`TagBus] tag[0:127];
-//reg BHT[]
+// reg [`AddrBus] BTB[`PredBus];
+// reg [`PredTagBus] tag[`PredBus];
+// reg global_BHT;
 
 always @(posedge clk) begin
     if(rst==`Enable) begin
-        pc<=`ZeroWord;
+        pc_o<=`ZeroWord;
     end else if(rdy==`Enable) begin
-        if(jump_enable_i==`Enable) begin
-            pc<=jump_dist;
+        if(jump_enable==`Enable) begin
+            pc_o<=jump_dist;
         end else if(stall==`NoStall) begin
-            pc<=pc+4;
+            pc_o<=pc_o+4;
         end
     end
 end

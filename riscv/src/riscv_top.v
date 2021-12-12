@@ -1,6 +1,8 @@
 // riscv top module file
 // modification allowed for debugging purposes
 
+`timescale 1ns/1ps //modified by lyy
+
 module riscv_top
 #(
 	parameter SIM = 0						// whether in simulation
@@ -165,5 +167,12 @@ end
 assign cpu_ram_din 	= (q_hci_io_en)  ? hci_io_dout 	 : ram_dout;
 
 assign hci_ram_din 	= ram_dout;
+
+initial begin
+	 
+	$dumpfile("a.vcd");  // 指定VCD文件的名字为wave.vcd，仿真信息将记录到此文件
+	$dumpvars(0, riscv_top);  // 指定层次数为0，则tb_code 模块及其下面各层次的所有信号将被记录
+
+end
 
 endmodule

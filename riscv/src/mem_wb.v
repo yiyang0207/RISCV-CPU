@@ -1,4 +1,4 @@
-`include "src/config.v"
+`include "config.v"
 
 module MEM_WB (
     input  wire clk,
@@ -23,11 +23,15 @@ always @(posedge clk) begin
         wb_vd<=`ZeroWord;
         wb_w_enable<=`Disable;
     end else if(rdy==`Enable)begin
+        // $display("3");
+        // $display("%b",stall_ctrler);
         if(stall_ctrler[3]==`Disable) begin
+            // $display("1");
             wb_rd<=mem_rd;
             wb_vd<=mem_vd;
             wb_w_enable<=mem_w_enable;
         end else if(stall_ctrler[4]==`Disable) begin
+            // $display("2");
             wb_rd<=`ZeroWord;
             wb_vd<=`ZeroWord;
             wb_w_enable<=`Disable;

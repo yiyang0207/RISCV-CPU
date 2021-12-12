@@ -1,4 +1,4 @@
-`include "src/config.v"
+`include "config.v"
 
 module ID_EX (
     input  wire clk,
@@ -15,7 +15,9 @@ module ID_EX (
     input  wire id_w_enable,
     // input  wire id_branch,
 
+    //EX
     input  wire jump_enable,
+    
     input  wire [`StallBus] stall_ctrler,
 
     //EX

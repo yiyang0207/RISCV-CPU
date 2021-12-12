@@ -1,7 +1,7 @@
 // RISCV32I CPU top module
 // port modification allowed for debugging purposes
 
-`include "src/config.v"
+`include "config.v"
 
 module cpu(
   input  wire                 clk_in,			// system clock signal
@@ -70,8 +70,8 @@ regfile RegFile(
   .w_data(regfile_w_data)
 );
 
-wire pcreg_jump_enable;
-wire [`AddrBus] pcreg_jump_dist;
+wire jump_enable;
+wire [`AddrBus] jump_dist;
 wire [`AddrBus] pcreg_pc;
 
 pc_reg PcReg(
@@ -79,10 +79,9 @@ pc_reg PcReg(
   .rst(rst_in),
   .rdy(rdy_in),
   .stall(stall_ctrler),
-  .jump_enable_i(pcreg_jump_enable),
-  .jump_dist(pcreg_jump_dist),
-  .pc(pcreg_pc),
-  .jump_enable_o()
+  .jump_enable(jump_enable),
+  .jump_dist(jump_dist),
+  .pc_o(pcreg_pc)
 );
 
 wire memctrl_if_enable;
@@ -141,7 +140,6 @@ IF If(
   .if_stall(if_stall)
 );
 
-wire ifid_jump_enable;
 wire [`AddrBus] ifid_id_pc;
 wire [`InstBus] ifid_id_inst;
 
@@ -151,7 +149,7 @@ IF_ID IfId(
   .rdy(rdy_in),
   .if_pc(if_ifid_pc),
   .if_inst(if_ifid_inst),
-  .jump_enable(ifid_jump_enable),
+  .jump_enable(jump_enable),
   .stall_ctrler(stall_ctrler),
   .id_pc(ifid_id_pc),
   .id_inst(ifid_id_inst)
@@ -201,7 +199,6 @@ ID Id(
   .id_stall(id_stall)
 );
 
-wire idex_jump_enable;
 wire [`AddrBus] idex_ex_pc;
 wire [`OptBus] idex_ex_inst;
 wire [`RegBus] idex_ex_vs1;
@@ -221,7 +218,7 @@ ID_EX IdEx(
   .id_rd(id_idex_rd),
   .id_imm(id_idex_imm),
   .id_w_enable(id_idex_w_enable),
-  .jump_enable(idex_jump_enable),
+  .jump_enable(jump_enable),
   .stall_ctrler(stall_ctrler),
   .ex_pc(idex_ex_pc),
   .ex_inst(idex_ex_inst),
@@ -234,8 +231,6 @@ ID_EX IdEx(
 
 wire [`OptBus] ex_exmem_inst;
 wire [`AddrBus] ex_exmem_memctrl_addr;
-wire ex_jump_enable;
-wire [`AddrBus] ex_jump_dist;
 
 EX Ex(
   .clk(clk_in),
@@ -254,8 +249,8 @@ EX Ex(
   .memctrl_addr(ex_exmem_memctrl_addr),
   .load_enable(ex_id_load_enable),
   .w_enable_o(ex_exmem_w_enable),
-  .jump_enable(ex_jump_enable),
-  .jump_dist(ex_jump_dist)
+  .jump_enable(jump_enable),
+  .jump_dist(jump_dist)
 );
 
 wire [`OptBus] exmem_mem_inst;
@@ -315,6 +310,7 @@ MEM_WB MemWb(
   .mem_rd(mem_memwb_rd),
   .mem_vd(mem_memwb_vd),
   .mem_w_enable(mem_memwb_w_enable),
+  .stall_ctrler(stall_ctrler),
   .wb_rd(regfile_w_addr),
   .wb_vd(regfile_w_data),
   .wb_w_enable(regfile_w_enable)

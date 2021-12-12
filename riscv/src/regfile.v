@@ -1,4 +1,4 @@
-`include "src/config.v"
+`include "config.v"
 
 module regfile (
     input  wire clk,
@@ -35,6 +35,7 @@ always @(posedge clk) begin //write
     end else if(rdy==`Enable&&w_enable==`Enable) begin
         if(w_addr!=`ZeroRegAddr) begin
             regs[w_addr]<=w_data;
+            // $display("%b %h %h",w_enable,w_addr,w_data);
         end
     end
 end

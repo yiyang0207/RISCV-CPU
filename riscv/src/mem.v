@@ -1,4 +1,4 @@
-`include "src/config.v"
+`include "config.v"
 
 module MEM (
     input  wire clk,
@@ -61,6 +61,7 @@ always @(*) begin
                     mem_stall=`Disable;
                 end else begin
                     vd_o=`ZeroWord;
+                    // mem_ctrl_enable=(mem_ctrl_if_busy==`Enable)?`Disable:`Enable;
                     mem_ctrl_enable=`Enable;
                     mem_ctrl_addr_o=memctrl_addr_i;
                     mem_ctrl_data_len=3'b001;
@@ -78,6 +79,7 @@ always @(*) begin
                     mem_stall=`Disable;
                 end else begin
                     vd_o=`ZeroWord;
+                    // mem_ctrl_enable=(mem_ctrl_if_busy==`Enable)?`Disable:`Enable;
                     mem_ctrl_enable=`Enable;
                     mem_ctrl_addr_o=memctrl_addr_i;
                     mem_ctrl_data_len=3'b010;
@@ -95,6 +97,7 @@ always @(*) begin
                     mem_stall=`Disable;
                 end else begin
                     vd_o=`ZeroWord;
+                    // mem_ctrl_enable=(mem_ctrl_if_busy==`Enable)?`Disable:`Enable;
                     mem_ctrl_enable=`Enable;
                     mem_ctrl_addr_o=memctrl_addr_i;
                     mem_ctrl_data_len=3'b100;
@@ -112,6 +115,7 @@ always @(*) begin
                     mem_stall=`Disable;
                 end else begin
                     vd_o=`ZeroWord;
+                    // mem_ctrl_enable=(mem_ctrl_if_busy==`Enable)?`Disable:`Enable;
                     mem_ctrl_enable=`Enable;
                     mem_ctrl_addr_o=memctrl_addr_i;
                     mem_ctrl_data_len=3'b001;
@@ -129,6 +133,7 @@ always @(*) begin
                     mem_stall=`Disable;
                 end else begin
                     vd_o=`ZeroWord;
+                    // mem_ctrl_enable=(mem_ctrl_if_busy==`Enable)?`Disable:`Enable;
                     mem_ctrl_enable=`Enable;
                     mem_ctrl_addr_o=memctrl_addr_i;
                     mem_ctrl_data_len=3'b010;
@@ -143,10 +148,11 @@ always @(*) begin
                     mem_ctrl_enable=`Disable;
                     mem_stall=`Disable;
                 end else begin
+                    // mem_ctrl_enable=(mem_ctrl_if_busy==`Enable)?`Disable:`Enable;
                     mem_ctrl_enable=`Enable;
-                    mem_ctrl_addr_o=memctrl_addr_i[7:0];
+                    mem_ctrl_addr_o=memctrl_addr_i;
                     mem_ctrl_data_len=3'b001;
-                    mem_ctrl_data_o=vd_i;
+                    mem_ctrl_data_o=vd_i[7:0];
                     mem_ctrl_rw_sel=1'b1;
                     mem_stall=`Enable;
                     rd_o=`ZeroRegAddr;
@@ -158,10 +164,11 @@ always @(*) begin
                     mem_ctrl_enable=`Disable;
                     mem_stall=`Disable;
                 end else begin
+                    // mem_ctrl_enable=(mem_ctrl_if_busy==`Enable)?`Disable:`Enable;
                     mem_ctrl_enable=`Enable;
-                    mem_ctrl_addr_o=memctrl_addr_i[15:0];
-                    mem_ctrl_data_len=3'b001;
-                    mem_ctrl_data_o=vd_i;
+                    mem_ctrl_addr_o=memctrl_addr_i;
+                    mem_ctrl_data_len=3'b010;
+                    mem_ctrl_data_o=vd_i[15:0];
                     mem_ctrl_rw_sel=1'b1;
                     mem_stall=`Enable;
                     rd_o=`ZeroRegAddr;
@@ -173,9 +180,10 @@ always @(*) begin
                     mem_ctrl_enable=`Disable;
                     mem_stall=`Disable;
                 end else begin
+                    // mem_ctrl_enable=(mem_ctrl_if_busy==`Enable)?`Disable:`Enable;
                     mem_ctrl_enable=`Enable;
                     mem_ctrl_addr_o=memctrl_addr_i;
-                    mem_ctrl_data_len=3'b001;
+                    mem_ctrl_data_len=3'b100;
                     mem_ctrl_data_o=vd_i;
                     mem_ctrl_rw_sel=1'b1;
                     mem_stall=`Enable;
