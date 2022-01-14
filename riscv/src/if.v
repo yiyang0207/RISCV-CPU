@@ -55,7 +55,6 @@ end
 always @(*) begin
     if(rst==`Enable) begin
         mem_ctrl_enable=`Disable;
-        mem_ctrl_addr=`ZeroWord;
         pc_o=`ZeroWord;
         inst_o=`ZeroWord;
         if_stall=`Disable;

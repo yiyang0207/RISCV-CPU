@@ -184,6 +184,8 @@ wire ex_id_w_finished;
 wire [`RegAddrBus] ex_exmem_rd;
 wire [`RegBus] ex_exmem_vd;
 wire mem_id_r_finished;
+wire [`RegAddrBus] mem_memwb_rd;
+wire [`RegBus] mem_memwb_vd;
 
 ID Id(
   .clk(clk_in),
@@ -298,8 +300,6 @@ EX_MEM ExMem(
   .mem_memctrl_addr(exmem_mem_memctrl_addr)
 );
 
-wire [`RegAddrBus] mem_memwb_rd;
-wire [`RegBus] mem_memwb_vd;
 wire mem_memwb_w_enable;
 
 MEM Mem(

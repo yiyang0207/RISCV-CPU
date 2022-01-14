@@ -55,9 +55,6 @@ assign data=dcache[index];
 
 always @(*) begin
     if(rst==`Enable) begin
-        rd_o=`ZeroRegAddr;
-        vd_o=`ZeroWord;
-        w_enable_o=`Disable;
         r_finished=`Disable;
         mem_ctrl_enable=`Disable;
         mem_ctrl_addr_o=`ZeroWord;
@@ -120,7 +117,6 @@ always @(*) begin
                     endcase
                 end else begin
                     r_finished=`Disable;
-                    vd_o=`ZeroWord;
                     if(mem_ctrl_if_busy==`Disable) begin
                         mem_ctrl_enable=`Enable;
                         mem_ctrl_rw_sel=1'b0;
@@ -185,8 +181,6 @@ always @(*) begin
                     endcase
                     mem_stall=`Enable;                    
                     r_finished=`Disable;
-                    rd_o=`ZeroRegAddr;
-                    vd_o=`ZeroWord;
                     cache_finished=`Disable;
                     cache_modified=`Disable;
                     cache_addr=`ZeroWord;

@@ -51,16 +51,11 @@ always @(*) begin
         r1_enable=`Disable;
         r2_enable=`Disable;
         pc_o=`ZeroWord;
-        vs1=`ZeroWord;
-        vs2=`ZeroWord;
         rd=`ZeroRegAddr;
         imm=`ZeroWord;
         w_enable_o=`Disable;
     end else begin
         pc_o=pc_i;
-        rd=`ZeroRegAddr;
-        imm=`ZeroWord;
-        w_enable_o=`Disable;
         rs1=inst_i[19:15];
         rs2=inst_i[24:20];
         case (opcode)
@@ -188,8 +183,7 @@ always @(*) begin
                 inst_o=`ZeroOpt;
                 r1_enable=`Disable;
                 r2_enable=`Disable;
-                vs1=`ZeroWord;
-                vs2=`ZeroWord;
+                w_enable_o=`Disable;
                 rd=`ZeroRegAddr;
                 imm=`ZeroWord;
             end
