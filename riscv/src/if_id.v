@@ -24,10 +24,15 @@ always @(posedge clk) begin
         id_pc<=`ZeroWord;
         id_inst<=`ZeroWord;
     end else if(rdy==`Enable)begin
-        if(stall_ctrler[0]==`Disable&&jump_enable==`Disable) begin
+        if(jump_enable==`Enable) begin
+            id_pc<=`ZeroWord;
+            id_inst<=`ZeroWord;
+        end else if(stall_ctrler[1]==`Enable) begin
+            
+        end else if(stall_ctrler[0]==`Disable) begin
             id_pc<=if_pc;
             id_inst<=if_inst;
-        end else if(jump_enable==`Enable||stall_ctrler[1]==`Disable) begin
+        end else begin
             id_pc<=`ZeroWord;
             id_inst<=`ZeroWord;
         end

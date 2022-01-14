@@ -28,10 +28,18 @@
 `define IcacheTagBus    17:10
 `define IcacheTag       7:0
 
+//dcache
+`define DcacheSize      256
+`define DcacheBus       0:255
+`define DcacheIndexBus  9:2
+`define DcacheIndex     7:0
+`define DcacheTagBus    17:10
+`define DcacheTag       7:0
+
 //predictor
 `define PredSize        128
 `define PredBus         0:127
-`define PredTagBus      8:0
+`define PredTagBus      12:0
 
 //stall
 `define NoStall         5'b00000

@@ -20,22 +20,25 @@ module regfile (
 
 reg[`RegBus] regs[0:31];
 
+integer fd;
+
 integer i;
 initial begin
     for (i=0;i<32;i=i+1) begin
         regs[i]=0;
     end
+    fd=$fopen("./a.txt","w+");
 end
 
 always @(posedge clk) begin //write
     if(rst==`Enable) begin
         for(i=0;i<32;i=i+1) begin
-            regs[i]<=`ZeroWord; //= or <=
+            regs[i]<=`ZeroWord;
         end
     end else if(rdy==`Enable&&w_enable==`Enable) begin
         if(w_addr!=`ZeroRegAddr) begin
+            $fdisplay(fd,"%h %h",w_addr,w_data);
             regs[w_addr]<=w_data;
-            // $display("%b %h %h",w_enable,w_addr,w_data);
         end
     end
 end

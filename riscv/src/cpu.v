@@ -70,18 +70,32 @@ regfile RegFile(
   .w_data(regfile_w_data)
 );
 
-wire jump_enable;
-wire [`AddrBus] jump_dist;
-wire [`AddrBus] pcreg_pc;
+wire ex_pcreg_jump_enable;
+wire [`AddrBus] ex_pcreg_jump_dist;
+wire ex_pcreg_is_branch;
+wire ex_pcreg_branch_taken;
+wire [`AddrBus] ex_pcreg_branch_pc;
+wire [`AddrBus] ex_pcreg_branch_dist;
+wire if_pcreg_icache_hit;
+wire if_pcreg_inst_finished;
+wire [`AddrBus] pcreg_if_pc;
+wire pcreg_if_jump_enable;
 
 pc_reg PcReg(
   .clk(clk_in),
   .rst(rst_in),
   .rdy(rdy_in),
   .stall(stall_ctrler),
-  .jump_enable(jump_enable),
-  .jump_dist(jump_dist),
-  .pc_o(pcreg_pc)
+  .jump_enable_i(ex_pcreg_jump_enable),
+  .jump_dist(ex_pcreg_jump_dist),
+  .is_branch(ex_pcreg_is_branch),
+  .branch_taken(ex_pcreg_branch_taken),
+  .branch_pc_i(ex_pcreg_branch_pc),
+  .branch_dist(ex_pcreg_branch_dist),
+  .icache_hit(if_pcreg_icache_hit),
+  .inst_finished(if_pcreg_inst_finished),
+  .pc_o(pcreg_if_pc),
+  .jump_enable_o(pcreg_if_jump_enable)
 );
 
 wire memctrl_if_enable;
@@ -128,7 +142,10 @@ IF If(
   .clk(clk_in),
   .rst(rst_in),
   .rdy(rdy_in),
-  .pc_i(pcreg_pc),
+  .pc_i(pcreg_if_pc),
+  .jump_enable_i(pcreg_if_jump_enable),
+  .icache_hit(if_pcreg_icache_hit),
+  .pc_reg_inst_finished(if_pcreg_inst_finished),
   .mem_ctrl_finished(memctrl_if_finished),
   .inst_i(memctrl_if_inst),
   .mem_ctrl_if_busy(memctrl_if_busy),
@@ -149,7 +166,7 @@ IF_ID IfId(
   .rdy(rdy_in),
   .if_pc(if_ifid_pc),
   .if_inst(if_ifid_inst),
-  .jump_enable(jump_enable),
+  .jump_enable(ex_pcreg_jump_enable),
   .stall_ctrler(stall_ctrler),
   .id_pc(ifid_id_pc),
   .id_inst(ifid_id_inst)
@@ -163,12 +180,10 @@ wire [`RegAddrBus] id_idex_rd;
 wire [`RegBus] id_idex_imm;
 wire id_idex_w_enable;
 wire ex_id_load_enable;
+wire ex_id_w_finished;
 wire [`RegAddrBus] ex_exmem_rd;
 wire [`RegBus] ex_exmem_vd;
-wire ex_exmem_w_enable;
-wire mem_id_w_enable;
-wire [`RegAddrBus] mem_id_rd;
-wire [`RegBus] mem_id_vd;
+wire mem_id_r_finished;
 
 ID Id(
   .clk(clk_in),
@@ -184,12 +199,12 @@ ID Id(
   .imm(id_idex_imm),
   .w_enable_o(id_idex_w_enable),
   .ex_load_enable(ex_id_load_enable),
-  .ex_w_enable(ex_exmem_w_enable),
+  .ex_w_finished(ex_id_w_finished),
   .ex_rd(ex_exmem_rd),
   .ex_vd(ex_exmem_vd),
-  .mem_w_enable(mem_id_w_enable),
-  .mem_rd(mem_id_rd),
-  .mem_vd(mem_id_vd),
+  .mem_r_finished(mem_id_r_finished),
+  .mem_rd(mem_memwb_rd),
+  .mem_vd(mem_memwb_vd),
   .r1_data(regfile_r1_data),
   .r2_data(regfile_r2_data),
   .rs1(regfile_r1_addr),
@@ -218,7 +233,7 @@ ID_EX IdEx(
   .id_rd(id_idex_rd),
   .id_imm(id_idex_imm),
   .id_w_enable(id_idex_w_enable),
-  .jump_enable(jump_enable),
+  .jump_enable(ex_pcreg_jump_enable),
   .stall_ctrler(stall_ctrler),
   .ex_pc(idex_ex_pc),
   .ex_inst(idex_ex_inst),
@@ -229,6 +244,7 @@ ID_EX IdEx(
   .ex_w_enable(idex_ex_w_enable)
 );
 
+wire ex_exmem_w_enable;
 wire [`OptBus] ex_exmem_inst;
 wire [`AddrBus] ex_exmem_memctrl_addr;
 
@@ -247,10 +263,16 @@ EX Ex(
   .rd_o(ex_exmem_rd),
   .vd(ex_exmem_vd),
   .memctrl_addr(ex_exmem_memctrl_addr),
-  .load_enable(ex_id_load_enable),
   .w_enable_o(ex_exmem_w_enable),
-  .jump_enable(jump_enable),
-  .jump_dist(jump_dist)
+  .load_enable(ex_id_load_enable),
+  .w_finished(ex_id_w_finished),
+  .jump_enable(ex_pcreg_jump_enable),
+  .jump_dist(ex_pcreg_jump_dist),
+  .is_branch(ex_pcreg_is_branch),
+  .branch_taken_o(ex_pcreg_branch_taken),
+  .branch_pc(ex_pcreg_branch_pc),
+  .branch_dist(ex_pcreg_branch_dist),
+  .predicted_pc(ifid_id_pc)
 );
 
 wire [`OptBus] exmem_mem_inst;
@@ -288,6 +310,7 @@ MEM Mem(
   .rd_i(exmem_mem_rd),
   .vd_i(exmem_mem_vd),
   .w_enable_i(exmem_mem_w_enable),
+  .r_finished(mem_id_r_finished),
   .memctrl_addr_i(exmem_mem_memctrl_addr),
   .rd_o(mem_memwb_rd),
   .vd_o(mem_memwb_vd),

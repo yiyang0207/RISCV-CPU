@@ -1,21 +1,19 @@
 // riscv top module file
 // modification allowed for debugging purposes
 
-`timescale 1ns/1ps //modified by lyy
-
 module riscv_top
 #(
 	parameter SIM = 0						// whether in simulation
 )
 (
-	input  wire 		EXCLK, //clk
-	input  wire			btnC, //rst
+	input wire 			EXCLK,
+	input wire			btnC,
 	output wire 		Tx,
-	input  wire 		Rx,
-	output wire		  	led
+	input wire 			Rx,
+	output wire			led
 );
 
-localparam SYS_CLK_FREQ = 100000000;
+localparam SYS_CLK_FREQ = 200000000;
 localparam UART_BAUD_RATE = 115200;
 localparam RAM_ADDR_WIDTH = 17; 			// 128KiB ram, should not be modified
 
@@ -26,6 +24,13 @@ wire clk;
 
 // assign EXCLK (or your own clock module) to clk
 assign clk = EXCLK;
+// wire locked;
+// clk_wiz_0 NEW_CLOCK(
+// 	.reset(btnC),
+// 	.clk_in1(EXCLK),
+// 	.clk_out1(clk),
+// 	.locked(locked)
+// );
 
 always @(posedge clk or posedge btnC)
 begin
@@ -90,7 +95,7 @@ wire        				hci_ram_wr;
 
 wire 						hci_io_en;
 wire [ 2:0]					hci_io_sel;
-wire [ 7:0]		            hci_io_din;
+wire [ 7:0]					hci_io_din;
 wire [ 7:0]					hci_io_dout;
 wire 						hci_io_wr;
 wire 						hci_io_full;
@@ -168,11 +173,9 @@ assign cpu_ram_din 	= (q_hci_io_en)  ? hci_io_dout 	 : ram_dout;
 
 assign hci_ram_din 	= ram_dout;
 
-initial begin
-	 
-	$dumpfile("a.vcd");  // 指定VCD文件的名字为wave.vcd，仿真信息将记录到此文件
-	$dumpvars(0, riscv_top);  // 指定层次数为0，则tb_code 模块及其下面各层次的所有信号将被记录
+// initial begin
+// 	$dumpfile("a.vcd"); 
+// 	$dumpvars(0, riscv_top); 
+// end
 
-end
-
-endmodule
+endmodule // riscv_top

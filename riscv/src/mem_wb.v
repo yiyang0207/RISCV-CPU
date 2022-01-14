@@ -12,7 +12,7 @@ module MEM_WB (
 
     input  wire [`StallBus] stall_ctrler,
     
-    //WB
+    //WB:regfile
     output reg [`RegAddrBus] wb_rd,
     output reg [`RegBus] wb_vd,
     output reg wb_w_enable
@@ -23,15 +23,13 @@ always @(posedge clk) begin
         wb_vd<=`ZeroWord;
         wb_w_enable<=`Disable;
     end else if(rdy==`Enable)begin
-        // $display("3");
-        // $display("%b",stall_ctrler);
-        if(stall_ctrler[3]==`Disable) begin
-            // $display("1");
+        if(stall_ctrler[4]==`Enable) begin
+            
+        end else if(stall_ctrler[3]==`Disable) begin
             wb_rd<=mem_rd;
             wb_vd<=mem_vd;
             wb_w_enable<=mem_w_enable;
-        end else if(stall_ctrler[4]==`Disable) begin
-            // $display("2");
+        end else begin
             wb_rd<=`ZeroWord;
             wb_vd<=`ZeroWord;
             wb_w_enable<=`Disable;

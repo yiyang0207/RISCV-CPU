@@ -8,7 +8,6 @@ module ID (
     //IF_ID
     input  wire [`AddrBus] pc_i,
     input  wire [`InstBus] inst_i,
-    // input  wire branch_i,
 
     //ID_EX
     output reg [`AddrBus] pc_o,
@@ -18,16 +17,15 @@ module ID (
     output reg [`RegAddrBus] rd,
     output reg [`RegBus] imm,
     output reg w_enable_o,
-    // output reg branch_o,
 
     //EX
     input  wire ex_load_enable,
-    input  wire ex_w_enable,
+    input  wire ex_w_finished,
     input  wire [`RegAddrBus] ex_rd,
     input  wire [`RegBus] ex_vd,
 
     //MEM
-    input  wire mem_w_enable,
+    input  wire mem_r_finished,
     input  wire [`RegAddrBus] mem_rd,
     input  wire [`RegBus] mem_vd,
 
@@ -58,12 +56,11 @@ always @(*) begin
         rd=`ZeroRegAddr;
         imm=`ZeroWord;
         w_enable_o=`Disable;
-        // branch_o=`Disable;
     end else begin
         pc_o=pc_i;
         rd=`ZeroRegAddr;
         imm=`ZeroWord;
-        // branch_o=branch_i;
+        w_enable_o=`Disable;
         rs1=inst_i[19:15];
         rs2=inst_i[24:20];
         case (opcode)
@@ -95,7 +92,6 @@ always @(*) begin
                 inst_o=`JALR;
                 rd=inst_i[11:7];
                 imm={{21{inst_i[31]}},inst_i[30:20]};
-                // $display("%d",imm);
                 w_enable_o=`Enable;
                 r1_enable=`Enable;
                 r2_enable=`Disable;
@@ -207,17 +203,18 @@ assign id_stall=r1_stall|r2_stall;
 
 //forwarding
 always @(*) begin //read1
-    r1_stall=`Disable;
     if(rst==`Enable||rdy==`Disable) begin
         vs1=`ZeroWord;
+        r1_stall=`Disable;
     end else begin
+        r1_stall=`Disable;
         if(r1_enable==`Enable) begin
             if(ex_load_enable==`Enable&&rs1==ex_rd) begin
                 vs1=`ZeroWord;
                 r1_stall=`Enable;
-            end else if(ex_w_enable==`Enable&&rs1==ex_rd) begin
+            end else if(ex_w_finished==`Enable&&rs1==ex_rd) begin
                 vs1=ex_vd;
-            end else if(mem_w_enable==`Enable&&rs1==mem_rd) begin
+            end else if(mem_r_finished==`Enable&&rs1==mem_rd) begin
                 vs1=mem_vd;
             end else begin
                 vs1=r1_data;
@@ -228,17 +225,18 @@ always @(*) begin //read1
     end
 end
 always @(*) begin //read2
-    r2_stall=`Disable;
     if(rst==`Enable||rdy==`Disable) begin
         vs2=`ZeroWord;
+        r2_stall=`Disable;
     end else begin
         if(r2_enable==`Enable) begin
+            r2_stall=`Disable;
             if(ex_load_enable==`Enable&&rs2==ex_rd) begin
                 vs2=`ZeroWord;
                 r2_stall=`Enable;
-            end else if(ex_w_enable==`Enable&&rs2==ex_rd) begin
+            end else if(ex_w_finished==`Enable&&rs2==ex_rd) begin
                 vs2=ex_vd;
-            end else if(mem_w_enable==`Enable&&rs2==mem_rd) begin
+            end else if(mem_r_finished==`Enable&&rs2==mem_rd) begin
                 vs2=mem_vd;
             end else begin
                 vs2=r2_data;

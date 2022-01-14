@@ -7,9 +7,7 @@ module stall_ctrl (
 
     input  wire if_stall,
     input  wire id_stall,
-    // input  wire ex_stall,
     input  wire mem_stall,
-    // input  wire wb_stall,
 
     output reg [`StallBus] stall_ctrler
 );

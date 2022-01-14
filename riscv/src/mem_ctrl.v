@@ -40,7 +40,7 @@ assign tmp_data[3]=mem_data_i[31:24];
 wire [`AddrBus] addr=(mem_enable==`Enable)?mem_addr:if_addr;
 assign ram_addr=addr+cnt;
 assign ram_data_o=tmp_data[cnt];
-assign ram_rw_sel=mem_rw_sel;
+assign ram_rw_sel=(mem_enable==`Enable)?mem_rw_sel:1'b0;
 
 reg[`RegBus] data_o;
 reg[`AddrBus] cur_addr;
@@ -84,17 +84,17 @@ always @(posedge clk) begin
             mem_busy<=`Enable;
             if_finished<=`Disable;
             mem_finished<=`Disable;
-            if (cnt<mem_data_len) begin
-                cnt<=cnt+3'b001;
-            end else begin
+            if (cnt==mem_data_len) begin
                 cnt<=3'b000;
                 if_busy<=`Disable;
                 mem_busy<=`Disable;
                 mem_finished<=`Enable;
+            end else begin
+                cnt<=cnt+3'b001;
             end
         end else if (if_enable==`Enable) begin //if
             if (if_addr!=cur_addr) begin
-                cnt=3'b000;
+                cnt<=3'b000;
             end
             mem_data_o<=`ZeroWord;
             if_busy<=`Enable;
