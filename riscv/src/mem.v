@@ -206,12 +206,11 @@ end
 
 always @(*) begin
     if(rst==`Enable) begin
-        rd_o=`ZeroWord;
+        rd_o=`ZeroRegAddr;
         vd_o=`ZeroWord;
         w_enable_o=`Disable;
     end else if(cache_finished==`Enable) begin
         rd_o=rd_i;
-        vd_o=`ZeroWord;
         w_enable_o=w_enable_i;
         case (inst_i)
             `LB:vd_o={{24{cache_data[7]}},cache_data[7:0]};
@@ -219,9 +218,10 @@ always @(*) begin
             `LW:vd_o=cache_data;
             `LBU:vd_o=cache_data[7:0];
             `LHU:vd_o=cache_data[15:0];
+            default:vd_o=`ZeroWord;
         endcase
     end else if(mem_ctrl_enable==`Enable) begin
-        rd_o=`ZeroWord;
+        rd_o=`ZeroRegAddr;
         vd_o=`ZeroWord;
         w_enable_o=`Disable;
     end else begin

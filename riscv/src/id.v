@@ -92,6 +92,7 @@ always @(*) begin
                 r2_enable=`Disable;
             end
             7'b1100011:begin //branch
+                rd=`ZeroRegAddr;
                 imm={{20{inst_i[31]}},inst_i[7],inst_i[30:25],inst_i[11:8],1'b0};
                 w_enable_o=`Disable;
                 r1_enable=`Enable;
@@ -120,6 +121,7 @@ always @(*) begin
                 endcase
             end
             7'b0100011:begin //store
+                rd=`ZeroRegAddr;
                 imm={{21{inst_i[31]}},inst_i[30:25],inst_i[11:7]};
                 w_enable_o=`Disable;
                 r1_enable=`Enable;
