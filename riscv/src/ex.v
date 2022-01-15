@@ -56,7 +56,6 @@ always @(*) begin
         vd=`ZeroWord;
         memctrl_addr=`ZeroWord;
         load_enable=`Disable;
-        w_finished=`Disable;
         w_enable_o=w_enable_i;
         jump_enable=`Disable;
         jump_dist=`ZeroWord;
@@ -67,6 +66,7 @@ always @(*) begin
         case (inst_i)
             `ZeroOpt:begin
                 rd_o=`ZeroWord;
+                w_finished=`Disable;
             end
             `LUI:begin
                 vd=imm;
@@ -105,6 +105,7 @@ always @(*) begin
                         jump_dist=pc_i+4; 
                     end  
                 end
+                w_finished=`Disable;
             end
             `BNE:begin
                 is_branch=`Enable;
@@ -123,6 +124,7 @@ always @(*) begin
                         jump_dist=pc_i+4; 
                     end  
                 end
+                w_finished=`Disable;
             end
             `BLT:begin
                 is_branch=`Enable;
@@ -141,6 +143,7 @@ always @(*) begin
                         jump_dist=pc_i+4; 
                     end  
                 end
+                w_finished=`Disable;
             end
             `BGE:begin
                 is_branch=`Enable;
@@ -159,6 +162,7 @@ always @(*) begin
                         jump_dist=pc_i+4; 
                     end  
                 end
+                w_finished=`Disable;
             end
             `BLTU:begin
                 is_branch=`Enable;
@@ -177,6 +181,7 @@ always @(*) begin
                         jump_dist=pc_i+4; 
                     end  
                 end
+                w_finished=`Disable;
             end
             `BGEU:begin
                 is_branch=`Enable;
@@ -195,14 +200,17 @@ always @(*) begin
                         jump_dist=pc_i+4; 
                     end  
                 end
+                w_finished=`Disable;
             end
             `LB,`LH,`LW,`LBU,`LHU:begin
                 memctrl_addr=vs1+imm;
                 load_enable=`Enable;
+                w_finished=`Disable;
             end
             `SB,`SH,`SW:begin
                 memctrl_addr=vs1+imm;
                 vd=vs2;
+                w_finished=`Disable;
             end
             `ADDI:begin
                 vd=vs1+imm;
