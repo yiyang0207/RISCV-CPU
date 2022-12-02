@@ -1,5 +1,7 @@
 # RISCV-CPU
 
+MS108 Course Project.
+
 #### Repo Structure
 
 ```
